@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>パスワードジェネレーター</title>
+  <style>
+    @media screen and (max-width: 480px) {
+      h1 {
+        font-size: 27px;
+      }
+    }
+    body {
+      text-align: center;
+    }
+    #btn {
+      padding: 7px 18px;
+      font-size: 25px;
+      border-radius: 5px;
+    }
+    #length {
+      padding: 5px;
+      font-size: 18px;
+      width: 40px;
+      border-radius: 5px;
+    }
+    #string {
+      padding: 25px;
+      width: 50%;
+      border: 2px solid #aaa;
+      border-radius: 10px;
+    }
+    #string-div {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      flex-flow: column;
+      justify-content: space-around;
+      align-items: center;
+    }
+    #area {
+      padding: 25px;
+      width: 50%;
+      border: 2px solid #aaa;
+      border-radius: 10px;
+    }
+    #area-div {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      flex-flow: column;
+      justify-content: space-around;
+      align-items: center;
+    }
+    #copy {
+      padding: 7px 18px;
+      font-size: 20px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>パスワードジェネレーター</h1>
+  <p><button id="btn">作成</button></p>
+  <p><input type="number" id="length" value="12"> 文字のパスワードにする</p>
+  <div id="string-div">
+    <div id="string">
+      <p>含める文字列</p>
+      <p><input type="checkbox" id="abc" checked>英小文字 <input type="checkbox" id="ABC" checked>英大文字 <input type="checkbox" id="num" checked>数字 <input type="checkbox" id="mark">記号</p>
+    </div>
+  </div>
+  <div id="area-div">
+    <p id="area">ここにパスワードが生成されます</p>
+  </div>
+  <p><button id="copy">コピー</button></p>
+  <script>
+    'use strict';
+    let length = 12;
+
+    function passwordGenerator() {
+      document.getElementById('area').innerText = '';
+      let password = '';
+      let charset = '';
+      let includeAllTypes = true;
+
+      if(document.getElementById('abc').checked) {
+        charset += 'abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz';
+      }
+      if(document.getElementById('ABC').checked) {
+        charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      }
+      if(document.getElementById('num').checked) {
+        charset += '012345678901234567890123456789012345678901234567890123456789';
+      }
+      if(document.getElementById('mark').checked) {
+        charset += '!?,.#$%&-+=^~<>_;:@*/!?,.#$%&-+=^~<>_;:@*/&%!?';
+      }
+      if(!charset) {
+        charset = ' ';
+      }
+      if(length <= 3) {
+        length = 4;
+      }
+
+      for (let i = 0; i < length; i++) {
+        password += charset[Math.floor(Math.random() * charset.length)];
+      }
+      
+      if(document.getElementById('abc').checked) {
+        includeAllTypes = includeAllTypes && /[a-z]/.test(password);
+      }
+      if(document.getElementById('ABC').checked) {
+        includeAllTypes = includeAllTypes && /[A-Z]/.test(password);
+      }
+      if(document.getElementById('num').checked) {
+        includeAllTypes = includeAllTypes && /[0-9]/.test(password);
+      }
+      if(document.getElementById('mark').checked) {
+        includeAllTypes = includeAllTypes && /[!"#$%&'()\*\+\-\.,\/:;<=>?@\[\\\]^_`{|}~]/g.test(password);
+      }
+
+      return includeAllTypes ? password : passwordGenerator();
+    }
+
+    function copy() {
+      navigator.clipboard.writeText(document.getElementById('area').innerText);
+    }
+
+    document.getElementById('copy').onclick = () => {
+      copy();
+      document.getElementById('copy').innerText = 'コピーしました！';
+      setTimeout(() => (document.getElementById('copy').innerText = 'コピー'), 1000);
+    }
+
+    document.getElementById('btn').onclick = () => {
+      document.getElementById('area').innerText = passwordGenerator();
+    };
+    document.getElementById('length').oninput = () => {
+      length = parseInt(document.getElementById('length').value);
+    }
+    document.body.onkeydown = (e) => {
+      if(e.key === 'Enter') {
+        document.getElementById('btn').onclick();
+      }
+    }
+  </script>
+</body>
+</html>
